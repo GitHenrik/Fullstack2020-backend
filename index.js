@@ -1,7 +1,22 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 //required json-parser to access the body element of requests
 app.use(express.json())
+
+// morgan-middleware is used to log requests. POST-requests are logged more in-depth
+
+morgan.token(morgan.token('new', (req, res) => {
+  if (req.method === 'POST') {
+
+    return JSON.stringify(req.body)
+  }
+  return ""
+}))
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :new'))
+
+// FullStack-course 2020, tasks 3.1-3.8*, Henrik Tarnanen
 
 let persons = [
   {
@@ -25,6 +40,7 @@ let persons = [
     "id": 4
   }
 ]
+
 
 
 app.post('/api/persons', (req, res) => {
