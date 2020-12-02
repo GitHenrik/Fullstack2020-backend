@@ -1,8 +1,11 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 const app = express()
+
 //required json-parser to access the body element of requests
 app.use(express.json())
+app.use(cors())
 
 // morgan-middleware is used to log requests. POST-requests are logged more in-depth
 
@@ -17,6 +20,7 @@ morgan.token(morgan.token('new', (req, res) => {
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :new'))
 
 // FullStack-course 2020, tasks 3.1-3.8*, Henrik Tarnanen
+//delete-pyynnölle ei ole special case-käsittelyä
 
 let persons = [
   {
@@ -115,7 +119,7 @@ app.delete('/api/persons/:id', (req, res) => {
   res.status(204).end()
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Listening ${PORT}.`)
 })
