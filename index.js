@@ -20,7 +20,7 @@ morgan.token(morgan.token('new', (req, res) => {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :new'))
 
-// FullStack-course 2020, tasks 3.1-3.8*, Henrik Tarnanen
+// FullStack-course 2020, tasks 3.1-3.8*, 3.9-3.11, Henrik Tarnanen
 //delete hasn't yet got special case treatment
 //https://polar-tundra-38946.herokuapp.com/api/persons
 //heroku logs -t
