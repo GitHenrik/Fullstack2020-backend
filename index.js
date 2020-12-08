@@ -69,11 +69,12 @@ app.post('/api/persons', (req, res) => {
       error: 'Number is missing'
     })
   }
-  if (persons.find(person => person.name === reqBody.name)) {
-    return res.status(400).json({
-      error: 'Name already in use'
-    })
-  }
+  //  --------this section is commented out regarding task 3.13-3.14
+  // if (persons.find(person => person.name === reqBody.name)) {
+  //   return res.status(400).json({
+  //     error: 'Name already in use'
+  //   })
+  // } --------------
 
 
   //const id = randomId()
