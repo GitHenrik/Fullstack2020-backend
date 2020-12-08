@@ -89,10 +89,10 @@ const randomId = () => {
 }
 
 app.get('/api/persons', (req, res) => {
-  //res.send(persons)
-  Person.find({}).then(mongoPersons => {
-    res.send(mongoPersons)
-  })
+  res.send(persons)
+  // Person.find({}).then(mongoPersons => {
+  //   res.send(mongoPersons)
+  // })
 })
 
 app.get('/info', (req, res) => {
