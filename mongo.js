@@ -1,10 +1,6 @@
 const mongoose = require('mongoose')
 
-if (process.argv.length < 3) {
-  console.log('give password as argument')
-  process.exit(1)
-}
-
+// course task 3.12
 const password = process.argv[2]
 
 const url = `mongodb+srv://fullstack:${password}@cluster0.vttyr.mongodb.net/phonebook?retryWrites=true&w=majority`
@@ -43,4 +39,9 @@ if (process.argv.length === 3) {
     })
     mongoose.connection.close()
   })
+}
+
+if (process.argv.length < 3) {
+  console.log('give password as argument')
+  process.exit(1)
 }

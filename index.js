@@ -2,6 +2,9 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
+//require dotenv before Person, as the variables are needed there
+require('dotenv').config()
+const Person = require('./models/person')
 
 //required json-parser to access the body element of requests
 app.use(express.json())
@@ -49,7 +52,9 @@ let persons = [
   }
 ]
 
-
+// const randomId = () => {
+//   return Math.floor(Math.random() * 99999)
+// }
 
 app.post('/api/persons', (req, res) => {
   const reqBody = req.body
@@ -71,28 +76,28 @@ app.post('/api/persons', (req, res) => {
   }
 
 
-  const id = randomId()
+  //const id = randomId()
 
   //console.log(req.headers)
   //console.log(req.body)
-  const personBody = {
+  const newPerson = new Person({
     "name": reqBody.name,
     "number": reqBody.number,
-    "id": id
-  }
-  persons = persons.concat(personBody)
-  res.json(personBody)
+    //"id": id
+  })
+  //persons = persons.concat(newPerson)
+  newPerson.save().then(savedPerson => {
+    res.json(savedPerson)
+  })
+
 })
 
-const randomId = () => {
-  return Math.floor(Math.random() * 99999)
-}
 
 app.get('/api/persons', (req, res) => {
-  res.send(persons)
-  // Person.find({}).then(mongoPersons => {
-  //   res.send(mongoPersons)
-  // })
+  //res.send(persons)
+  Person.find({}).then(mongoPersons => {
+    res.json(mongoPersons)
+  })
 })
 
 app.get('/info', (req, res) => {
@@ -101,23 +106,29 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  //console.log("id ", id, " of type ", typeof id)
-  //if the id doesn't match, send http 404
-  // if (!persons[id]) {
+  //const id = Number(req.params.id)
+  // //console.log("id ", id, " of type ", typeof id)
+  // //if the id doesn't match, send http 404
+  // // if (!persons[id]) {
+  // //   res.status(404).end()
+  // // }
+  // // res.json(persons[id])
+  // const person = persons.find(person => person.id === id)
+  // if (person) {
+  //   //console.log("match")
+  //   res.json(person)
+  // }
+
+  // else {
+  //   //console.log("no match")
   //   res.status(404).end()
   // }
-  // res.json(persons[id])
-  const person = persons.find(person => person.id === id)
-  if (person) {
-    //console.log("match")
+  Person.findById(req.params.id).then(person => {
     res.json(person)
-  }
-
-  else {
-    //console.log("no match")
-    res.status(404).end()
-  }
+  })
+    .catch(error => {
+      console.log("GET failed: ", error.message)
+    })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -126,7 +137,7 @@ app.delete('/api/persons/:id', (req, res) => {
   res.status(204).end()
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
-  console.log(`Listening ${PORT}.`)
+  console.log(`Server running on port ${PORT}.`)
 })
