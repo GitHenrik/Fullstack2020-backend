@@ -21,6 +21,7 @@ morgan.token(morgan.token('new', (req, res) => {
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :new'))
 
 // FullStack-course 2020, tasks 3.1-3.8*, 3.9-3.11, Henrik Tarnanen
+// task 3.12 in file mongo.js
 //delete hasn't yet got special case treatment
 //https://polar-tundra-38946.herokuapp.com/api/persons
 //heroku logs -t
@@ -88,7 +89,10 @@ const randomId = () => {
 }
 
 app.get('/api/persons', (req, res) => {
-  res.send(persons)
+  //res.send(persons)
+  Person.find({}).then(mongoPersons => {
+    res.send(mongoPersons)
+  })
 })
 
 app.get('/info', (req, res) => {
