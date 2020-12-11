@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
 
-// POISTA ENNEN  PUSHAUSTA OSOITTEET JA SALASANAT YMS
-//const password = process.argv[2]
-//const url = `mongodb+srv://fullstack:${password}@cluster0.vttyr.mongodb.net/phonebook?retryWrites=true`
+
 const url = process.env.MONGODB_URI
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })

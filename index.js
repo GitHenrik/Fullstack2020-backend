@@ -1,3 +1,8 @@
+// FullStack-course 2020, tasks 3.1-3.18*, Henrik Tarnanen
+// task 3.12 in file mongo.js
+
+// TODO: tasks 3.17, 3.18
+
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
@@ -7,9 +12,10 @@ require('dotenv').config()
 const Person = require('./models/person')
 
 //required json-parser to access the body element of requests
+app.use(express.static('build'))
 app.use(express.json())
 app.use(cors())
-app.use(express.static('build'))
+
 
 // morgan-middleware is used to log requests. POST-requests are logged more in-depth
 
@@ -23,11 +29,7 @@ morgan.token(morgan.token('new', (req, res) => {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :new'))
 
-// FullStack-course 2020, tasks 3.1-3.8*, 3.9-3.11, Henrik Tarnanen
-// task 3.12 in file mongo.js
-//delete hasn't yet got special case treatment
-//https://polar-tundra-38946.herokuapp.com/api/persons
-//heroku logs -t
+
 
 let persons = [
   {
@@ -94,11 +96,12 @@ app.post('/api/persons', (req, res) => {
 })
 
 
-app.get('/api/persons', (req, res) => {
+app.get('/api/persons', (req, res, next) => {
   //res.send(persons)
   Person.find({}).then(mongoPersons => {
     res.json(mongoPersons)
   })
+    .catch(error => next(error))
 })
 
 app.get('/info', (req, res) => {
@@ -106,7 +109,7 @@ app.get('/info', (req, res) => {
   <div>${new Date()}</div>`)
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res, next) => {
   //const id = Number(req.params.id)
   // //console.log("id ", id, " of type ", typeof id)
   // //if the id doesn't match, send http 404
@@ -125,20 +128,51 @@ app.get('/api/persons/:id', (req, res) => {
   //   res.status(404).end()
   // }
   Person.findById(req.params.id).then(person => {
-    res.json(person)
+    if (person) {
+      res.json(person)
+    } else {
+      res.status(404).end()
+    }
   })
     .catch(error => {
-      console.log("GET failed: ", error.message)
+      next(error)
+      // console.log("GET failed: ", error.message)
+      // res.status(400).send({ error: 'Malformatted ID' })
     })
 })
 
-app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  persons = persons.filter(person => person.id !== id)
-  res.status(204).end()
+app.delete('/api/persons/:id', (req, res, next) => {
+  // const id = Number(req.params.id)
+  // persons = persons.filter(person => person.id !== id)
+  // res.status(204).end()
+  Person.findByIdAndRemove(req.params.id)
+    .then(result => {
+      res.status(204).end()
+    })
+    .catch(error => next(error))
+
 })
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}.`)
 })
+
+//error handling start
+const errorHandler = (error, req, res, next) => {
+  console.log("Error name is ", error.name)
+  console.log(error.message)
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'Malformatted ID' })
+  }
+  next(error)
+}
+app.use(errorHandler)
+//error handling end
+
+//unknown endpoint start
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: 'Unknown endpoint' })
+}
+app.use(unknownEndpoint)
+//unknown endpoint end
