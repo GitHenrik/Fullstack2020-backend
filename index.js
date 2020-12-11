@@ -58,7 +58,34 @@ let persons = [
 //   return Math.floor(Math.random() * 99999)
 // }
 
-app.post('/api/persons', (req, res) => {
+app.put('/api/persons/:id', (req, res, next) => {
+  const reqBody = req.body
+  // error handling
+  if (!reqBody.name) {
+    return res.status(400).json({
+      error: 'Name is missing'
+    })
+  }
+  if (!reqBody.number) {
+    return res.status(400).json({
+      error: 'Number is missing'
+    })
+  }
+  //create a new person object to update existing data
+  const newPerson = {
+    "name": reqBody.name,
+    "number": reqBody.number,
+  }
+
+  //perform the put request to update the person by ID
+  Person.findByIdAndUpdate(req.params.id, newPerson)
+    .then(updatedPerson => {
+      res.json(updatedPerson)
+    })
+    .catch(error => next(error))
+})
+
+app.post('/api/persons', (req, res, next) => {
   const reqBody = req.body
   // error handling
   if (!reqBody.name) {
@@ -92,6 +119,7 @@ app.post('/api/persons', (req, res) => {
   newPerson.save().then(savedPerson => {
     res.json(savedPerson)
   })
+    .catch(error => next(error))
 
 })
 
@@ -104,9 +132,15 @@ app.get('/api/persons', (req, res, next) => {
     .catch(error => next(error))
 })
 
-app.get('/info', (req, res) => {
-  res.send(`<div> Phonebook has info on ${persons.length} people</div>
-  <div>${new Date()}</div>`)
+app.get('/info', (req, res, next) => {
+  Person.find({})
+    .then(people => {
+      res.send(`<div>Phonebook has info on ${people.length} people</div>
+      <div>${new Date()}</div>`)
+    })
+    .catch(error => next(error))
+  // res.send(`<div> Phonebook has info on ${persons.length} people</div>
+  // <div>${new Date()}</div>`)
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -158,7 +192,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}.`)
 })
 
-//error handling start
+//error handling start (task 3.16)
 const errorHandler = (error, req, res, next) => {
   console.log("Error name is ", error.name)
   console.log(error.message)
