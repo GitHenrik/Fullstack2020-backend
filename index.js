@@ -1,7 +1,7 @@
 // FullStack-course 2020, tasks 3.1-3.22, Henrik Tarnanen
 // task 3.12 in file mongo.js
+//ESlint warns about a couple of unused vars, which are left in on purpose
 
-// TODO: tasks 3.19-3.22
 
 const express = require('express')
 const morgan = require('morgan')
@@ -24,35 +24,11 @@ morgan.token(morgan.token('new', (req, res) => {
 
     return JSON.stringify(req.body)
   }
-  return ""
+  return ''
 }))
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :new'))
 
-
-
-let persons = [
-  {
-    "name": "Arto Hellas",
-    "number": "040-123456",
-    "id": 1
-  },
-  {
-    "name": "Ada Lovelace",
-    "number": "39-44-5323523",
-    "id": 2
-  },
-  {
-    "name": "Dan Abramov",
-    "number": "12-43-234345",
-    "id": 3
-  },
-  {
-    "name": "Mary Poppendieck",
-    "number": "39-23-6423122",
-    "id": 4
-  }
-]
 
 // const randomId = () => {
 //   return Math.floor(Math.random() * 99999)
@@ -73,8 +49,8 @@ app.put('/api/persons/:id', (req, res, next) => {
   }
   //create a new person object to update existing data
   const newPerson = {
-    "name": reqBody.name,
-    "number": reqBody.number,
+    'name': reqBody.name,
+    'number': reqBody.number,
   }
 
   //perform the put request to update the person by ID
@@ -111,9 +87,9 @@ app.post('/api/persons', (req, res, next) => {
   //console.log(req.headers)
   //console.log(req.body)
   const newPerson = new Person({
-    "name": reqBody.name,
-    "number": reqBody.number,
-    //"id": id
+    'name': reqBody.name,
+    'number': reqBody.number,
+    //'id': id
   })
   //persons = persons.concat(newPerson)
   newPerson.save()
@@ -145,7 +121,7 @@ app.get('/info', (req, res, next) => {
 
 app.get('/api/persons/:id', (req, res, next) => {
   //const id = Number(req.params.id)
-  // //console.log("id ", id, " of type ", typeof id)
+  // //console.log('id ', id, ' of type ', typeof id)
   // //if the id doesn't match, send http 404
   // // if (!persons[id]) {
   // //   res.status(404).end()
@@ -153,12 +129,12 @@ app.get('/api/persons/:id', (req, res, next) => {
   // // res.json(persons[id])
   // const person = persons.find(person => person.id === id)
   // if (person) {
-  //   //console.log("match")
+  //   //console.log('match')
   //   res.json(person)
   // }
 
   // else {
-  //   //console.log("no match")
+  //   //console.log('no match')
   //   res.status(404).end()
   // }
   Person.findById(req.params.id).then(person => {
@@ -170,7 +146,7 @@ app.get('/api/persons/:id', (req, res, next) => {
   })
     .catch(error => {
       next(error)
-      // console.log("GET failed: ", error.message)
+      // console.log('GET failed: ', error.message)
       // res.status(400).send({ error: 'Malformatted ID' })
     })
 })
@@ -194,7 +170,7 @@ app.listen(PORT, () => {
 
 //error handling start (task 3.16)
 const errorHandler = (error, req, res, next) => {
-  console.log("Error name is ", error.name)
+  console.log('Error name is ', error.name)
   console.log(error.message)
   if (error.name === 'CastError') {
     return res.status(400).send({ error: 'Malformatted ID' })

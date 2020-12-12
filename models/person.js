@@ -5,10 +5,10 @@ const url = process.env.MONGODB_URI
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
   .then(res => {
-    console.log("Connected to MongoDB")
+    console.log('Connected to MongoDB')
   })
   .catch(error => {
-    console.log("Error connecting to MongoDB: ", error.message)
+    console.log('Error connecting to MongoDB: ', error.message)
   })
 
 const personSchema = new mongoose.Schema({
