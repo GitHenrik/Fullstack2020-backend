@@ -1,7 +1,7 @@
-// FullStack-course 2020, tasks 3.1-3.18*, Henrik Tarnanen
+// FullStack-course 2020, tasks 3.1-3.22, Henrik Tarnanen
 // task 3.12 in file mongo.js
 
-// TODO: tasks 3.17, 3.18
+// TODO: tasks 3.19-3.22
 
 const express = require('express')
 const morgan = require('morgan')
@@ -88,16 +88,16 @@ app.put('/api/persons/:id', (req, res, next) => {
 app.post('/api/persons', (req, res, next) => {
   const reqBody = req.body
   // error handling
-  if (!reqBody.name) {
-    return res.status(400).json({
-      error: 'Name is missing'
-    })
-  }
-  if (!reqBody.number) {
-    return res.status(400).json({
-      error: 'Number is missing'
-    })
-  }
+  // if (!reqBody.name) {
+  //   return res.status(400).json({
+  //     error: 'Name is missing'
+  //   })
+  // }
+  // if (!reqBody.number) {
+  //   return res.status(400).json({
+  //     error: 'Number is missing'
+  //   })
+  // }
   //  --------this section is commented out regarding task 3.13-3.14
   // if (persons.find(person => person.name === reqBody.name)) {
   //   return res.status(400).json({
@@ -116,9 +116,9 @@ app.post('/api/persons', (req, res, next) => {
     //"id": id
   })
   //persons = persons.concat(newPerson)
-  newPerson.save().then(savedPerson => {
-    res.json(savedPerson)
-  })
+  newPerson.save()
+    .then(savedPerson => savedPerson.toJSON())
+    .then(formattedPerson => res.json(formattedPerson))
     .catch(error => next(error))
 
 })
@@ -198,6 +198,9 @@ const errorHandler = (error, req, res, next) => {
   console.log(error.message)
   if (error.name === 'CastError') {
     return res.status(400).send({ error: 'Malformatted ID' })
+  }
+  if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message })
   }
   next(error)
 }
